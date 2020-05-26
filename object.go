@@ -2,6 +2,13 @@ package vkapi
 
 import "encoding/json"
 
+const (
+	BtnColorPrimary   = "primary"
+	BtnColorSecondary = "secondary"
+	BtnColorNegative  = "negative"
+	BtnColorPositive  = "positive"
+)
+
 type Message struct {
 	ID                    int          `json:"id"`
 	Date                  int64        `json:"date"`
