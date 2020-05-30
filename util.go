@@ -5,10 +5,10 @@ import (
 	"strings"
 )
 
-func sliceToStr(a []int) string {
+func sliceToStr(a []int64) string {
 	var s []string
 	for _, num := range a {
-		s = append(s, strconv.Itoa(num))
+		s = append(s, strconv.FormatInt(num, 10))
 	}
 	return strings.Join(s, ",")
 }

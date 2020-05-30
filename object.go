@@ -1,6 +1,9 @@
 package vkapi
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"fmt"
+)
 
 const (
 	BtnColorPrimary   = "primary"
@@ -10,10 +13,10 @@ const (
 )
 
 type Message struct {
-	ID                    int          `json:"id"`
+	ID                    int64          `json:"id"`
 	Date                  int64        `json:"date"`
-	PeerID                int          `json:"peer_id"`
-	FromID                int          `json:"from_id"`
+	PeerID                int64        `json:"peer_id"`
+	FromID                int64        `json:"from_id"`
 	Text                  string       `json:"text"`
 	ConversationMessageID int          `json:"conversation_message_id"`
 	RandomID              int64        `json:"random_id"`
@@ -266,15 +269,19 @@ type Wall struct {
 }
 
 type Photo struct {
-	ID      int    `json:"id"`
-	AlbumID int    `json:"album_id"`
-	OwnerID int    `json:"owner_id"`
-	UserID  int    `json:"user_id"`
+	ID      int64  `json:"id"`
+	AlbumID int64  `json:"album_id"`
+	OwnerID int64  `json:"owner_id"`
+	UserID  int64  `json:"user_id"`
 	Text    string `json:"text"`
 	Date    int64  `json:"date"`
 	Sizes   []Size `json:"sizes"`
 	Width   int    `json:"width"`
 	Height  int    `json:"height"`
+}
+
+func (p *Photo) Attachment() string {
+	return fmt.Sprintf("photo%d_%d", p.OwnerID, p.ID)
 }
 
 type Video struct {

@@ -12,7 +12,7 @@ import (
 )
 
 type GroupGetLPServerReq struct {
-	GroupID int
+	GroupID int64
 }
 
 func (GroupGetLPServerReq) Name() string {
@@ -23,7 +23,7 @@ func (g *GroupGetLPServerReq) Values() url.Values {
 	v := url.Values{}
 
 	if g.GroupID > 0 {
-		v.Set("group_id", strconv.Itoa(g.GroupID))
+		v.Set("group_id", strconv.FormatInt(g.GroupID, 10))
 	}
 	return v
 }
@@ -44,7 +44,7 @@ func (vk *VkAPI) GroupGetLPServer(v *GroupGetLPServerReq) (*LPServer, error) {
 	return &apiResp, nil
 }
 
-func (vk *VkAPI) GroupLPServ(groupID int) error {
+func (vk *VkAPI) GroupLPServ(groupID int64) error {
 	return vk.groupLongPoll(context.Background(), groupID)
 }
 
@@ -54,7 +54,7 @@ func (vk *VkAPI) GroupLPCallback(name string, f func(event *GroupLPUpdates)) {
 	}
 }
 
-func (vk *VkAPI) groupLongPoll(ctx context.Context, groupID int) error {
+func (vk *VkAPI) groupLongPoll(ctx context.Context, groupID int64) error {
 	server, err := vk.GroupGetLPServer(&GroupGetLPServerReq{
 		GroupID: groupID,
 	})
@@ -89,7 +89,7 @@ func (vk *VkAPI) groupLongPoll(ctx context.Context, groupID int) error {
 
 		var e GroupLPEvent
 		if err := json.Unmarshal(body, &e); err != nil {
-
+			log.Print("Unmarshalling error: %w", err)
 		}
 
 		switch true {

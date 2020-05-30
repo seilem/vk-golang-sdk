@@ -16,21 +16,26 @@ import (
 
 const LastLPVersion = 3
 
+const (
+	ActivityTyping       = "typing"
+	ActivityAudioMessage = "audiomessage"
+)
+
 type MsgReq struct {
-	UserID          int
+	UserID          int64
 	RandomID        int64
-	PeerID          int
+	PeerID          int64
 	Domain          string
 	ChatID          int64
-	UsersID         []int
+	UsersID         []int64
 	Message         string
 	Lat             float64
 	Long            float64
 	Attachment      []string
-	ReplyTo         int
-	ForwardMessages []int
+	ReplyTo         int64
+	ForwardMessages []int64
 	StickerID       int
-	GroupID         int
+	GroupID         int64
 	Keyboard        *Keyboard
 	Payload         string
 	DontParseLinks  bool
@@ -45,7 +50,7 @@ func (MsgReq) Name() string {
 func (m *MsgReq) Values() url.Values {
 	v := url.Values{}
 	if m.UserID != 0 {
-		v.Set("user_id", strconv.Itoa(m.UserID))
+		v.Set("user_id", strconv.FormatInt(m.UserID, 10))
 	}
 
 	if m.RandomID != 0 {
@@ -53,7 +58,7 @@ func (m *MsgReq) Values() url.Values {
 	}
 
 	if m.PeerID != 0 {
-		v.Set("peer_id", strconv.Itoa(m.PeerID))
+		v.Set("peer_id", strconv.FormatInt(m.PeerID, 10))
 	}
 
 	if len(m.Domain) > 0 {
@@ -85,7 +90,7 @@ func (m *MsgReq) Values() url.Values {
 	}
 
 	if m.ReplyTo > 0 {
-		v.Set("reply_to", strconv.Itoa(m.ReplyTo))
+		v.Set("reply_to", strconv.FormatInt(m.ReplyTo, 10))
 	}
 
 	if len(m.ForwardMessages) > 0 {
@@ -97,7 +102,7 @@ func (m *MsgReq) Values() url.Values {
 	}
 
 	if m.GroupID > 0 {
-		v.Set("group_id", strconv.Itoa(m.GroupID))
+		v.Set("group_id", strconv.FormatInt(m.GroupID, 10))
 	}
 
 	if m.Keyboard != nil {
@@ -123,10 +128,10 @@ func (m *MsgReq) Values() url.Values {
 }
 
 type MsgSetActivityReq struct {
-	UserID  int
+	UserID  int64
 	Type    string
-	PeerID  int
-	GroupID int
+	PeerID  int64
+	GroupID int64
 }
 
 func (MsgSetActivityReq) Name() string {
@@ -136,7 +141,7 @@ func (MsgSetActivityReq) Name() string {
 func (m *MsgSetActivityReq) Values() url.Values {
 	v := url.Values{}
 	if m.UserID != 0 {
-		v.Set("user_id", strconv.Itoa(m.UserID))
+		v.Set("user_id", strconv.FormatInt(m.UserID, 10))
 	}
 
 	if len(m.Type) > 0 {
@@ -144,11 +149,11 @@ func (m *MsgSetActivityReq) Values() url.Values {
 	}
 
 	if m.PeerID != 0 {
-		v.Set("peer_id", strconv.Itoa(m.PeerID))
+		v.Set("peer_id", strconv.FormatInt(m.PeerID, 10))
 	}
 
 	if m.GroupID > 0 {
-		v.Set("group_id", strconv.Itoa(m.GroupID))
+		v.Set("group_id", strconv.FormatInt(m.GroupID, 10))
 	}
 
 	return v
@@ -209,7 +214,7 @@ func (m *MsgEditReq) Values() url.Values {
 }
 
 type MsgDeleteReq struct {
-	MessageIDs   []int
+	MessageIDs   []int64
 	Spam         bool
 	GroupID      int
 	DeleteForAll bool
@@ -238,8 +243,8 @@ func (m *MsgDeleteReq) Values() url.Values {
 }
 
 type GetByConversationMessageIDReq struct {
-	PeerID                 []int
-	ConversationMessageIDs []int
+	PeerID                 []int64
+	ConversationMessageIDs []int64
 	Extended               bool
 	Fields                 []string
 	GroupID                int
@@ -287,6 +292,36 @@ func (m *MsgGetLPServerReq) Values() url.Values {
 	}
 
 	v.Set("lp_version", strconv.Itoa(m.LPVersion))
+	return v
+}
+
+type MsgMarkAsReadReq struct {
+	MessageIDs             []int64
+	PeerID                 int64
+	StartMessageID         int64
+	GroupID                int64
+	MarkConversationAsRead bool
+}
+
+func (MsgMarkAsReadReq) Name() string {
+	return "messages.markAsRead"
+}
+
+func (r *MsgMarkAsReadReq) Values() url.Values {
+	v := url.Values{}
+	if len(r.MessageIDs) > 0 {
+		v.Set("message_ids", sliceToStr(r.MessageIDs))
+	}
+	if r.PeerID != 0 {
+		v.Set("peer_id", strconv.FormatInt(r.PeerID, 10))
+	}
+	if r.StartMessageID != 0 {
+		v.Set("start_message_id", strconv.FormatInt(r.StartMessageID, 10))
+	}
+	if r.GroupID != 0 {
+		v.Set("group_id", strconv.FormatInt(r.GroupID, 10))
+	}
+	v.Set("mark_conversation_as_read", strconv.FormatBool(r.MarkConversationAsRead))
 	return v
 }
 
@@ -346,6 +381,14 @@ func (vk *VkAPI) MsgEdit(v *MsgEditReq) error {
 //
 // See https://vk.com/dev/messages.delete
 func (vk *VkAPI) MsgDelete(v *MsgDeleteReq) error {
+	_, err := vk.MakeRequest(v.Name(), v.Values())
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (vk *VkAPI) MsgMarkAsRead(v *MsgMarkAsReadReq) error {
 	_, err := vk.MakeRequest(v.Name(), v.Values())
 	if err != nil {
 		return err
