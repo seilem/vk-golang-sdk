@@ -22,7 +22,7 @@ type VideoGetReq struct {
 }
 
 type UploadedVideoResp struct {
-	Size int `json:"size"`
+	Size    int   `json:"size"`
 	VideoID int64 `json:"video_id"`
 }
 
@@ -53,10 +53,10 @@ func (r *VideoGetReq) Values() url.Values {
 }
 
 type VideoSaveReq struct {
-	VideoName string
+	VideoName   string
 	Description string
-	Link      string
-	GroupID   int64 `json:"group_id"`
+	Link        string
+	GroupID     int64 `json:"group_id"`
 }
 
 func (VideoSaveReq) Name() string {
@@ -145,7 +145,7 @@ func MakeUploadVideoRequest(uploadURL string, file File) (*http.Request, error) 
 	return req, nil
 }
 
-func (vk *VkAPI) UploadVideo(uploadURL string, file File) (*UploadedVideoResp, error)  {
+func (vk *VkAPI) UploadVideo(uploadURL string, file File) (*UploadedVideoResp, error) {
 	req, err := MakeUploadVideoRequest(uploadURL, file)
 	if err != nil {
 		return nil, err
@@ -167,4 +167,3 @@ func (vk *VkAPI) UploadVideo(uploadURL string, file File) (*UploadedVideoResp, e
 	}
 	return &v, nil
 }
-

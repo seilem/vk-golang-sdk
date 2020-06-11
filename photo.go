@@ -113,9 +113,9 @@ func (r GetMessagesUploadServerReq) Values() url.Values {
 }
 
 type SaveMessagesPhotoReq struct {
-	Photo     string
-	Server    int
-	Hash      string
+	Photo  string
+	Server int
+	Hash   string
 }
 
 func (SaveMessagesPhotoReq) Name() string {
@@ -173,7 +173,6 @@ func (vk *VkAPI) SaveMessagesPhoto(r *SaveMessagesPhotoReq) ([]Photo, error) {
 	}
 	return p, nil
 }
-
 
 func MakeUploadPhotoRequest(uploadURL string, files []File) (*http.Request, error) {
 	body := &bytes.Buffer{}

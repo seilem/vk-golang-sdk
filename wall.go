@@ -18,11 +18,11 @@ type WallGetReq struct {
 }
 
 type WallPostReq struct {
-	OwnerID    int
-	FriendOnly bool
-	FromGroup  bool
-	Message    string
-	Copyright  string
+	OwnerID     int
+	FriendOnly  bool
+	FromGroup   bool
+	Message     string
+	Copyright   string
 	Attachments []string
 }
 

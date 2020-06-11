@@ -13,7 +13,7 @@ const (
 )
 
 type Message struct {
-	ID                    int64          `json:"id"`
+	ID                    int64        `json:"id"`
 	Date                  int64        `json:"date"`
 	PeerID                int64        `json:"peer_id"`
 	FromID                int64        `json:"from_id"`

@@ -31,7 +31,7 @@ type MsgReq struct {
 	Message         string
 	Lat             float64
 	Long            float64
-	Attachment      []string
+	Attachments     []string
 	ReplyTo         int64
 	ForwardMessages []int64
 	StickerID       int
@@ -85,8 +85,8 @@ func (m *MsgReq) Values() url.Values {
 		v.Set("long", fmt.Sprintf("%f", m.Long))
 	}
 
-	if len(m.Attachment) > 0 {
-		v.Set("attachment", strings.Join(m.Attachment, ","))
+	if len(m.Attachments) > 0 {
+		v.Set("attachment", strings.Join(m.Attachments, ","))
 	}
 
 	if m.ReplyTo > 0 {
